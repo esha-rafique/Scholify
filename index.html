@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholify — Global Scholarship Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- dark overlay for when side panels are open -->
+<div class="ov" id="ov" onclick="closeAllPanels()"></div>
+
+
+<!-- ========== SAVED SCHOLARSHIPS PANEL ========== -->
+
+<div class="panel" id="panel">
+    <div class="panel-head">
+        <h3>Saved Scholarships</h3>
+        <button class="pclose" onclick="closePanel()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <div id="plist"></div>
+</div>
+
+
+<!-- ========== SUBMIT A SCHOLARSHIP PANEL ========== -->
+
+<div class="submit-panel" id="submit-panel">
+    <div class="panel-head">
+        <h3>Submit a Scholarship</h3>
+        <button class="pclose" onclick="closeSubmitPanel()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <p style="font-size: 13px; color: #7a7a7a; line-height: 1.6; margin-bottom: 20px;">
+        Know a scholarship that's not listed here? Help other students by submitting it! We'll review and add it to our database.
+    </p>
+
+    <form id="submit-form" onsubmit="handleSubmitScholarship(event)">
+
+        <div class="form-group">
+            <label class="form-label">Your Email Address *</label>
+            <input type="email" class="form-input" name="email" required placeholder="your.email@example.com">
+            <div class="form-hint">We'll notify you when your submission is reviewed</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Scholarship Name *</label>
+            <input type="text" class="form-input" name="name" required placeholder="e.g., Chevening Scholarship">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Host Country *</label>
+            <input type="text" class="form-input" name="country" required placeholder="e.g., United Kingdom">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Study Level *</label>
+            <select class="form-select" name="level" required>
+                <option value="">Select a level</option>
+                <option value="hs">High School / O-Levels</option>
+                <option value="intermediate">Intermediate / A-Levels</option>
+                <option value="undergrad">Undergraduate (Bachelor's)</option>
+                <option value="masters">Master's / MS / MBA</option>
+                <option value="phd">PhD / Doctoral</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Field of Study</label>
+            <input type="text" class="form-input" name="field" placeholder="e.g., All Fields, STEM, Engineering">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Funding Type *</label>
+            <select class="form-select" name="funding" required>
+                <option value="">Select funding type</option>
+                <option value="full">Fully Funded</option>
+                <option value="partial">Partially Funded</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Application Deadline</label>
+            <input type="text" class="form-input" name="deadline" placeholder="e.g., December 15, 2026 or Rolling">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Official Website URL *</label>
+            <input type="url" class="form-input" name="link" required placeholder="https://">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Additional Details</label>
+            <textarea class="form-textarea" name="details" placeholder="Any other important information about eligibility, benefits, or requirements..."></textarea>
+        </div>
+
+        <button type="submit" class="form-submit" id="submit-btn">
+            <i class="fa-solid fa-paper-plane" style="font-size: 12px;"></i> Submit Scholarship
+        </button>
+    </form>
+
+    <div class="success-message" id="success-msg">
+        <i class="fa-solid fa-check-circle"></i>
+        <h4>Submission Received!</h4>
+        <p>Thank you for contributing! We'll review your submission and notify you at the email you provided once it's approved.</p>
+    </div>
+</div>
+
+
+<!-- ========== NAVBAR ========== -->
+
+<nav>
+    <div class="logo"><em>Scholify</em></div>
+    <div class="nav-actions">
+        <button class="submit-nav" onclick="openSubmitPanel()">
+            <i class="fa-solid fa-plus" style="font-size: 11px;"></i> Submit Scholarship
+        </button>
+        <button class="bm-nav" onclick="openPanel()">
+            <i class="fa-solid fa-bookmark" style="font-size: 12px;"></i> Saved
+            <span class="bm-count" id="bmc">0</span>
+        </button>
+    </div>
+</nav>
+
+
+<!-- ========== HERO ========== -->
+
+<section class="hero">
+    <div class="pill">
+        <i class="fa-solid fa-database" style="font-size: 9px;"></i> Verified scholarships you can trust
+    </div>
+    <h1>We do the hunting <br> You do the applying</h1>
+    <p>Filter by country, field, and education level, and see every scholarship you qualify for.</p>
+    <div class="hero-stats">
+        <div>
+            <span class="hs-num">100+</span>
+            <span class="hs-lbl">Scholarships</span>
+        </div>
+        <div>
+            <span class="hs-num">40+</span>
+            <span class="hs-lbl">Countries</span>
+        </div>
+        <div>
+            <span class="hs-num">20+</span>
+            <span class="hs-lbl">Fields of Study</span>
+        </div>
+    </div>
+</section>
+
+
+<!-- ========== FILTER BOX ========== -->
+
+<div class="fzone">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 22px 0 26px;">
+        <div class="fbox">
+            <div class="frow">
+
+                <!-- Education Level -->
+                <div class="fg">
+                    <label class="fl">
+                        <i class="fa-solid fa-graduation-cap" style="font-size: 9px;"></i> Education Level
+                    </label>
+                    <select class="fs" id="f-edu" >
+                        <option value="">All levels</option>
+                        <option value="hs">High School / O-Levels / Matric</option>
+                        <option value="intermediate">Intermediate / A-Levels / FSc</option>
+                        <option value="undergrad">Undergraduate (Bachelor's)</option>
+                        <option value="masters">Master's / MS / MBA</option>
+                        <option value="phd">PhD / Doctoral</option>
+                    </select>
+                </div>
+
+                <!-- Home Country -->
+                <div class="fg">
+                    <label class="fl">
+                        <i class="fa-solid fa-flag" style="font-size: 9px;"></i> Your Home Country
+                    </label>
+                    <select class="fs" id="f-home" >
+                        <option value="">All countries</option>
+                        <optgroup label="South Asia">
+                            <option value="pakistan">Pakistan</option>
+                            <option value="india">India</option>
+                            <option value="bangladesh">Bangladesh</option>
+                            <option value="nepal">Nepal</option>
+                            <option value="srilanka">Sri Lanka</option>
+                            <option value="afghanistan">Afghanistan</option>
+                        </optgroup>
+                        <optgroup label="Middle East & North Africa">
+                            <option value="egypt">Egypt</option>
+                            <option value="jordan">Jordan</option>
+                            <option value="palestine">Palestine</option>
+                            <option value="syria">Syria</option>
+                            <option value="yemen">Yemen</option>
+                            <option value="iraq">Iraq</option>
+                            <option value="lebanon">Lebanon</option>
+                            <option value="morocco">Morocco</option>
+                            <option value="tunisia">Tunisia</option>
+                            <option value="algeria">Algeria</option>
+                            <option value="sudan">Sudan</option>
+                            <option value="libya">Libya</option>
+                        </optgroup>
+                        <optgroup label="Southeast Asia">
+                            <option value="indonesia">Indonesia</option>
+                            <option value="philippines">Philippines</option>
+                            <option value="vietnam">Vietnam</option>
+                            <option value="myanmar">Myanmar</option>
+                            <option value="cambodia">Cambodia</option>
+                            <option value="laos">Laos</option>
+                        </optgroup>
+                        <optgroup label="Sub-Saharan Africa">
+                            <option value="nigeria">Nigeria</option>
+                            <option value="kenya">Kenya</option>
+                            <option value="ghana">Ghana</option>
+                            <option value="ethiopia">Ethiopia</option>
+                            <option value="tanzania">Tanzania</option>
+                            <option value="uganda">Uganda</option>
+                            <option value="rwanda">Rwanda</option>
+                            <option value="zimbabwe">Zimbabwe</option>
+                            <option value="zambia">Zambia</option>
+                            <option value="senegal">Senegal</option>
+                            <option value="cameroon">Cameroon</option>
+                            <option value="mozambique">Mozambique</option>
+                        </optgroup>
+                        <optgroup label="Central Asia">
+                            <option value="uzbekistan">Uzbekistan</option>
+                            <option value="kazakhstan">Kazakhstan</option>
+                            <option value="tajikistan">Tajikistan</option>
+                            <option value="kyrgyzstan">Kyrgyzstan</option>
+                        </optgroup>
+                        <optgroup label="Latin America">
+                            <option value="brazil">Brazil</option>
+                            <option value="colombia">Colombia</option>
+                            <option value="mexico">Mexico</option>
+                            <option value="peru">Peru</option>
+                            <option value="ecuador">Ecuador</option>
+                            <option value="bolivia">Bolivia</option>
+                            <option value="haiti">Haiti</option>
+                            <option value="honduras">Honduras</option>
+                        </optgroup>
+                        <optgroup label="Eastern Europe & Caucasus">
+                            <option value="ukraine">Ukraine</option>
+                            <option value="georgia">Georgia</option>
+                            <option value="armenia">Armenia</option>
+                            <option value="azerbaijan">Azerbaijan</option>
+                            <option value="moldova">Moldova</option>
+                        </optgroup>
+                        <optgroup label="Pacific">
+                            <option value="papua">Papua New Guinea</option>
+                            <option value="fiji">Fiji</option>
+                            <option value="samoa">Samoa</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Field of Study -->
+                <div class="fg">
+                    <label class="fl">
+                        <i class="fa-solid fa-book-open" style="font-size: 9px;"></i> Field of Study
+                    </label>
+                    <select class="fs" id="f-field" >
+                        <option value="">All fields</option>
+                        <optgroup label="── Technology & Computing">
+                            <option value="cs">Computer Science / IT</option>
+                            <option value="software">Software Engineering</option>
+                            <option value="data">Data Science & AI / Machine Learning</option>
+                            <option value="cyber">Cybersecurity</option>
+                            <option value="electronics">Electronics & Telecommunications</option>
+                            <option value="math">Mathematics & Statistics</option>
+                        </optgroup>
+                        <optgroup label="── Engineering">
+                            <option value="civil">Civil Engineering</option>
+                            <option value="mechanical">Mechanical Engineering</option>
+                            <option value="electrical">Electrical Engineering</option>
+                            <option value="chemical">Chemical Engineering</option>
+                            <option value="aerospace">Aerospace / Aviation Engineering</option>
+                            <option value="industrial">Industrial Engineering</option>
+                            <option value="biomedeng">Biomedical Engineering</option>
+                            <option value="environmental_eng">Environmental Engineering</option>
+                            <option value="petroleum">Petroleum & Energy Engineering</option>
+                        </optgroup>
+                        <optgroup label="── Natural Sciences">
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="biology">Biology / Life Sciences</option>
+                            <option value="biotech">Biotechnology & Genetics</option>
+                            <option value="enviro">Environmental Science / Ecology</option>
+                            <option value="earth">Earth & Geological Sciences</option>
+                            <option value="nano">Nanotechnology & Materials Science</option>
+                            <option value="astronomy">Astronomy & Space Science</option>
+                        </optgroup>
+                        <optgroup label="── Health & Medicine">
+                            <option value="medicine">Medicine / MBBS / Clinical Medicine</option>
+                            <option value="pharmacy">Pharmacy & Pharmaceutical Sciences</option>
+                            <option value="nursing">Nursing & Midwifery</option>
+                            <option value="dentistry">Dentistry & Oral Health</option>
+                            <option value="pubhealth">Public Health & Epidemiology</option>
+                            <option value="nutrition">Nutrition & Dietetics</option>
+                            <option value="veterinary">Veterinary Science & Animal Health</option>
+                        </optgroup>
+                        <optgroup label="── Social Sciences & Humanities">
+                            <option value="law">Law / Legal Studies</option>
+                            <option value="politics">Political Science / International Relations</option>
+                            <option value="economics">Economics</option>
+                            <option value="sociology">Sociology & Anthropology</option>
+                            <option value="psychology">Psychology</option>
+                            <option value="history">History & Archaeology</option>
+                            <option value="philosophy">Philosophy & Ethics</option>
+                            <option value="geography">Geography & Urban Planning</option>
+                            <option value="linguistics">Linguistics & Languages</option>
+                            <option value="literature">Literature & Cultural Studies</option>
+                            <option value="religious">Religious & Islamic Studies</option>
+                            <option value="gender">Gender & Women's Studies</option>
+                        </optgroup>
+                        <optgroup label="── Media, Arts & Design">
+                            <option value="journalism">Journalism & Media Studies</option>
+                            <option value="communication">Communication & Public Relations</option>
+                            <option value="finearts">Fine Arts & Visual Arts</option>
+                            <option value="design">Graphic Design & UX/UI</option>
+                            <option value="architecture">Architecture & Interior Design</option>
+                            <option value="film">Film, Theatre & Performing Arts</option>
+                            <option value="music">Music</option>
+                            <option value="fashion">Fashion & Textile Design</option>
+                        </optgroup>
+                        <optgroup label="── Business & Management">
+                            <option value="business">Business Administration / MBA</option>
+                            <option value="finance">Finance, Banking & Accounting</option>
+                            <option value="marketing">Marketing & Advertising</option>
+                            <option value="entrepreneurship">Entrepreneurship & Innovation</option>
+                            <option value="hr">Human Resources & Organizational Studies</option>
+                            <option value="logistics">Supply Chain, Trade & Logistics</option>
+                            <option value="pubadmin">Public Administration & Governance</option>
+                            <option value="tourism">Tourism & Hospitality</option>
+                        </optgroup>
+                        <optgroup label="── Education & Social Work">
+                            <option value="education">Education & Teaching</option>
+                            <option value="earlychild">Early Childhood Education</option>
+                            <option value="socialwork">Social Work & Community Development</option>
+                            <option value="sports">Sports Science & Physical Education</option>
+                        </optgroup>
+                        <optgroup label="── Agriculture & Environment">
+                            <option value="agriculture">Agriculture & Agronomy</option>
+                            <option value="foodscience">Food Science & Technology</option>
+                            <option value="water">Water Management & Irrigation</option>
+                            <option value="forestry">Forestry & Natural Resource Management</option>
+                            <option value="fisheries">Fisheries & Marine Sciences</option>
+                            <option value="climatechange">Climate Change & Sustainability</option>
+                        </optgroup>
+                        <optgroup label="── Development & Policy">
+                            <option value="development">Development Studies / International Development</option>
+                            <option value="peace">Peace Studies & Conflict Resolution</option>
+                            <option value="humanrights">Human Rights & Humanitarian Studies</option>
+                            <option value="pubpolicy">Public Policy & Governance</option>
+                            <option value="migration">Migration & Refugee Studies</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Funding Type -->
+                <div class="fg">
+                    <label class="fl">
+                        <i class="fa-solid fa-coins" style="font-size: 9px;"></i> Funding Type
+                    </label>
+                    <select class="fs" id="f-fund" >
+                        <option value="">Any funding</option>
+                        <option value="full">Fully Funded</option>
+                        <option value="partial">Partially Funded</option>
+                    </select>
+                </div>
+
+                <button class="go-btn" onclick="filterAndRender()">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 12px;"></i> Find
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- decorative wave that transitions into the cream background -->
+
+</div>
+
+
+<!-- ========== MAIN CONTENT ========== -->
+
+<div class="main">
+
+    <!-- shown before any search is made -->
+    <div class="intro-box" id="intro">
+        <h3>Popular Searches</h3>
+        <div class="quick-wrap">
+            <button class="qbtn" onclick="qs('undergrad', 'pakistan', 'full', 'all')">🇵🇰 Pakistan · Undergrad · Fully Funded </button>
+            <button class="qbtn" onclick="qs('masters', 'india', '', 'engineering')">🇮🇳 India · Master's · Engineering </button>
+            <button class="qbtn" onclick="qs('phd', '', 'full', 'physics')">🌍 PhD · Physics · Fully Funded</button>
+            <button class="qbtn" onclick="qs('undergrad', 'bangladesh', '', 'all')">🇧🇩 Bangladesh · Undergrad</button>
+            <button class="qbtn" onclick="qs('masters', '', 'full', 'engineering')">🌍 Master's Engineering · Fully Funded</button>
+            <button class="qbtn" onclick="qs('', '', 'full', '')">🌍 All Fully Funded Scholarships</button>
+        </div>
+    </div>
+
+    <!-- search results get injected here -->
+    <div id="results"></div>
+
+</div>
+
+
+<!-- ========== FOOTER ========== -->
+
+<footer>
+    <p>
+        Always verify deadlines at the official website before applying.<br>
+        Built for students chasing a better future.
+    </p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
