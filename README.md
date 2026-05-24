@@ -1,7 +1,4 @@
-## What is Scholify?
-
-# Scholify — Global Scholarship Finder
-A free platform helping students from developing countries discover fully funded international scholarships easily, Instead of spending hours searching, students can filter through 100+ verified international scholarships in seconds.
+Scholify is a free platform helping students from developing countries discover fully funded international scholarships easily, Instead of spending hours searching, students can filter through 100+ verified international scholarships in seconds.
 
 ---
 
