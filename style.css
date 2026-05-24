@@ -97,20 +97,6 @@ nav {
     text-align: center;
 }
 
-.pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid rgba(126, 203, 161, 0.28);
-    color: #7ecba1;
-    font-size: 11px;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-    padding: 5px 15px;
-    border-radius: 50px;
-    margin-bottom: 16px;
-}
-
 .hero h1 {
     font-family: 'Playfair Display', serif;
     font-size: 50px;
@@ -1003,20 +989,54 @@ footer strong {
 }
 
 @media (max-width: 750px) {
-    nav { padding: 0 18px; }
-    .nav-actions { gap: 6px; }
-    .submit-nav, .bm-nav { padding: 6px 12px; font-size: 12px; }
-    .hero { padding: 36px 18px 30px; }
-    .hero h1 { font-size: 30px; }
-    .hero-stats { gap: 24px; }
-    .fzone { padding: 0 18px; }
-    .frow { grid-template-columns: 1fr; }
-    .main { padding: 22px 18px 50px; }
+
+    /* NAV */
+    nav {
+        padding: 0 14px;
+        height: auto;
+        min-height: 56px;
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+    .logo em { font-size: 22px; }
+    .nav-actions { gap: 5px; }
+    .submit-nav { padding: 5px 10px; font-size: 11px; gap: 4px; }
+    .submit-nav span:not(.fa) { display: none; }
+    .bm-nav { padding: 5px 10px; font-size: 11px; gap: 4px; }
+
+    /* HERO */
+    .hero { padding: 90px 16px 40px; }
+    .hero h1 { font-size: 28px; margin-top: 16px; margin-bottom: 24px; }
+    .hero p { font-size: 14px; margin-bottom: 50px; }
+    .hero-stats {
+        gap: 0;
+        justify-content: space-around;
+        padding-top: 28px;
+        margin-top: 28px;
+    }
+    .hs-num { font-size: 22px; }
+    .hs-lbl { font-size: 10px; }
+
+    /* FILTER */
+    .fzone { padding: 0 14px 24px; border-radius: 0 0 28px 28px; }
+    .fbox { padding: 14px 12px; }
+    .frow { grid-template-columns: 1fr; gap: 10px; }
+
+    /* MAIN */
+    .main { padding: 18px 14px 50px; }
+
+    /* CARDS */
+    .ch { padding: 14px 14px 12px; gap: 10px; }
+    .cflag { width: 38px; height: 38px; font-size: 20px; }
+    .cname { font-size: 15px; }
     .tiles { grid-template-columns: 1fr 1fr; }
     .bgrid { grid-template-columns: 1fr; }
     .docgrid { grid-template-columns: 1fr; }
+
+    /* PANELS */
     .panel { width: 100%; }
     .submit-panel { width: 100%; }
-    .fbox { padding: 18px 16px; }
-    footer { padding: 22px 18px; }
+
+    /* FOOTER */
+    footer { padding: 20px 16px; border-radius: 28px 28px 0 0; }
 }
